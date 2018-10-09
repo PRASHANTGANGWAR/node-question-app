@@ -1,0 +1,31 @@
+.absolute{
+    position: relative;
+    background-color:gray;
+    width: 380px;
+    height: relative;
+    top: 0;
+    right: 0;
+    bottom:0;
+    left:0;
+    margin:auto;
+    padding: 30px;
+    
+  }
+  .sign
+  {
+    color:white;
+    text-align:center;
+    font-size:20px;
+  }
+  .last
+  { color:white;
+   font-family:verdana;
+   text-align:center;
+   font-size:17px;
+  }
+  .page-header
+  {
+   color: dimgray;
+   text-align: center;
+  }
+  

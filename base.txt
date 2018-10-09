@@ -1,0 +1,14 @@
+update({"_id": args._id, "viewData._id": widgetId}, {$set: {"viewData.$.widgetData": widgetDoc.widgetData}})
+
+
+db.questions..update({'option': 2}, {'$set': {
+    'items.$.option': 'updated item2',
+    'items.$.VoteCount': 5
+}}
+
+
+                    wheere        what
+db.questions.update({id:6},{$inc:{VoteCount:1}}) // to update vote count
+
+db.questions.insert({id:6 , option:"opt6",VoteCount:1})//insert option
+
