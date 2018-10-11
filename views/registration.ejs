@@ -15,7 +15,7 @@
  <% include template/header.ejs%>
   <div class="absolute">   
     <p class="sign">Register for your account</p>
-    <form id="signupForm" action="/registration" method="POST">
+    <form id="signupForm" action="/api/registration" method="POST">
      <div class="form-group">
        <input type="text" id="name" class="form-control input-lg" placeholder="Name" name="name" required>      
      </div>    
@@ -30,7 +30,7 @@
      </div>       
    </form>   
    <div>
-    <p class="last"> Already have an account? <a class="last" href="/login"> login</a></p>
+    <p class="last"> Already have an account? <a class="last" href="/api/login"> login</a></p>
   </div>
 </div>
 </body>

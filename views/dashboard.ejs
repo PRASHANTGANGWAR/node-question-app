@@ -8,13 +8,28 @@
         <div>
             <h3>Question ...............................</h3>
         </div>
-        <div class="options">
-            <label for="options" class="label" name="label"> option1</label>
-            <input type="radio" name= "radio" class="radio" >
-            <hr>
-            <p>Add option </p>
-            <input type="text" class="textbox" name = "textbox">
-        </div>
-        
+         <div class="options">
+
+                <!-- <ul>
+                        <% for(var i=0; i< data.length; i++) {%>
+                           <li><label for="options" class="label" name="label"> <%= data[i].option %></label>
+                            <input type="radio" name= "radio" class="radio" >
+                           </li>
+                        <% } %>
+                </ul> -->
+
+                <form id="addOption" action="/api/addOptions" method="POST">
+                    <select class="form-control" id="opt" name="optionselected">
+                            <% for(var i=0; i < data.length; i++) { %>
+                               <option><%= data[i].option %></option>
+                            <% } %>
+                            </select>
+                            
+                <hr>
+                <p>Add option </p>
+                <input type="text" class="textbox" name = "textbox">
+                <button class="btn btn-info btn-block" id="btn" type='submit' >Update Response</button>
+            </form>
+         </div>
     </body>
 </html>
