@@ -12,7 +12,13 @@ app.use(express.static('./views'));
 app.use(bodyParser());
 //app.use('/api', router);
 app.set('view engine','ejs');
-var session = require('express-session')
+
+//session
+var session = require('express-session');
+app.use(session({secret: 'prashant'}));
+
+//sssion
+
 
 app.use('/api',require('./api/routes/index.js'));
 

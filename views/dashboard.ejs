@@ -1,23 +1,25 @@
 <html>
     <head>
         <title></title>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/public/css/registration.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script  src="/js/validations.js"> </script>
     </head>
     <body>
-        <h1>Opt out one option </h1>
+            <% include template/header.ejs%>
+            <div class="absolute">   
+        <h3>Please opt out one option </h3>
 
         <div>
-            <h3>Question ...............................</h3>
+            <h3>Question :WHICH OPTION IS GOOD TO VOTED <h3>
         </div>
          <div class="options">
-
-                <!-- <ul>
-                        <% for(var i=0; i< data.length; i++) {%>
-                           <li><label for="options" class="label" name="label"> <%= data[i].option %></label>
-                            <input type="radio" name= "radio" class="radio" >
-                           </li>
-                        <% } %>
-                </ul> -->
-
+                <!-- <h1>voted or not : <%= voted %></h1> -->
                 <form id="addOption" action="/api/addOptions" method="POST">
                     <select class="form-control" id="opt" name="optionselected">
                             <% for(var i=0; i < data.length; i++) { %>
@@ -26,10 +28,11 @@
                             </select>
                             
                 <hr>
-                <p>Add option </p>
-                <input type="text" class="textbox" name = "textbox">
-                <button class="btn btn-info btn-block" id="btn" type='submit' >Update Response</button>
+                <p>Add An Option </p>
+                <input type="text" class="textbox" name = "textbox"><br><br>
+                <button class="btn btn-info btn-block" id="btn" type='submit' >submit</button>
             </form>
          </div>
+         <div>
     </body>
 </html>

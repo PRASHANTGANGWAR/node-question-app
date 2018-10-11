@@ -22,6 +22,11 @@ app.use(bodyParser());
 var cookieParser = require('cookie-parser')
 app.use(cookieParser())
 
+var session = require('express-session');
+app.use(session({secret: 'prashant'}));
+
+var sess;
+
 
 var id = count;
 
@@ -30,11 +35,14 @@ router.get('/', function (req, res) {
 });
 
 router.post('/addOptions',async function (req, res) {
+  
+   if(sess.voted==false){
    id =id;
    var VoteCount = 1;
    var option= req.body.textbox;
    var optionselected = req.body.optionselected;
     if(option==''){
+    
     console.log("in if");
     var resp =await questions.updateOne({option:optionselected},{$inc:{VoteCount:1}});
     console.log("mongo",resp)
@@ -47,7 +55,13 @@ router.post('/addOptions',async function (req, res) {
     console.log(resp);
     count++;
   }
+
+  await registrationSchema.updateOne({email:sess.email},{$set:{voted:true}});
  res.send("voted");
+}
+else{
+  res.send("why you want to vote again ??? hmmmm ????");
+}
 });
 
 
@@ -59,38 +73,50 @@ router.get('/login',function(req,res){
 router.get('/dashboard',async function(req,res,result){
 
   try{
+    var voted = await registrationSchema.findOne({email:sess.email});
+    sess.voted =voted.voted; 
+    console.log("voted arr", voted.voted);
+    console.log("hhhhhhhhhhhhhhhhhhhh",sess.email);
+
       let resp = await questions.find({});
       console.log(resp)
             // if (err) return console.log(err)
-      res.render('dashboard.ejs',{data:resp});
+      res.render('dashboard.ejs',{data:resp,voted:voted.voted});
   }
   catch(e){
       console.log(e)
   }
 
 });
-router.post('/dashboard',async function(req,res,result){
+// router.post('/dashboard',async function(req,res,result){
 
-  try{
-      var id =req.body.id;
-      var resp= await questionSchema.updateOne({id:4},{$inc:{VoteCount:1}})
-  }
-  catch(e){
-      console.log(e)
-  }  
-});
+//   try{
+    
+//     var voted = await registrationSchema.findOne({email:sess.email}); 
+//     if(voted.voted==false){
+//       var id =req.body.id;
+//       var resp= await questionSchema.updateOne({id:4},{$inc:{VoteCount:1}})
+//     }
+//   }
+//   catch(e){
+//       console.log(e)
+//   }  
+// });
 
 
 router.post('/login', urlencodedParser , async function(req,res,next){
   if (!req.body) return res.sendStatus(400)
+  sess = req.session;
+  sess.email=req.body.email;
 var query = {
       email:req.body.email,
       password:req.body.password
 };
 
   try{
+  
       let resp = await registrationSchema.findOne(query);
-      console.log(resp);
+      //console.log(resp);
       if (resp.length == 0) res.send("Not found");
       else{
         res.redirect('/api/dashboard');
