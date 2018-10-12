@@ -1,14 +1,14 @@
 .absolute{
     position:relative;
     background-color:gray;
-    width: 317px;
+    width: 550px;
     height:relative;
     top:0;
     right: 0;
     bottom:0;
     left:0;
     margin:auto;
-    padding: 33px;
+    padding: 50px;
   }
   
   .sign
@@ -31,3 +31,6 @@
    text-align: center;
   }
   
+  .h3{
+      font-size: 20px;
+  }

@@ -7,23 +7,31 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <link rel="stylesheet" href="/public/css/login.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="/js/validations.js"></script>
+  <script type="application/json" src="public/js/validations.js"></script>
    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="/jquery/jquery.js"></script>
+
 </head>
 <body>
    <%- include template/header.ejs%>
 	 <div class="absolute" >    
   <p class="sign">Login to your account</p>
+
+  <% if(locals.message){ %>
+    <div class="alert alert-success" role="alert">
+        <strong>login unsucessful</strong> <%=message.success%>
+    </div>
+<% } %>
   <div class="row">
    <div class="col-lg-4"></div>
    <div >
-     <form id="loginForm" method="POST" action="/api/login">       
+     <form autocomplete="off" id="loginForm" method="POST" action="/api/login">       
        <div class="form-group" >
          <input type="email"  class="form-control input-lg" placeholder="Email" name="email" required>
        </div>       
        <div class="form-group">
-         <input type="password" minlength="5" class="form-control input-lg" placeholder="password" name="password" required>
+         <input  autocomplete="off"  type="password" minlength="8" class="form-control input-lg" placeholder="password" name="password" required>
        </div>       
        <div  class="form-group">
          <button class="btn btn-info btn-block input-lg" id="btn" type='submit'>LogIn</button>
