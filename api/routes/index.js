@@ -175,7 +175,7 @@ router.post('/registration', urlencodedParser, async function (req, res) {
               from: 'prashant.dreamkix@gmail.com',
               to: emailTo,
               subject: 'verify your mail for voting app',
-              text: 'http://localhost:8080/api/verify?token='+token
+              text: 'http://localhost:8081/api/verify?token='+token
             };
             
             transporter.sendMail(mailOptions, function(error, info){
@@ -199,8 +199,144 @@ router.post('/registration', urlencodedParser, async function (req, res) {
        res.render('registration');
     }
   })
+
+
+
+
+router.post('/registration', urlencodedParser, async function (req, res) {
+      if (!req.body) return res.sendStatus(400)
+      var query = {
+        email:req.body.email,
+      };
+      let resp  = await registrationSchema.findOne(query);
+     // console.log('response for checking emial; existance',resp);
+
+      if(!resp){
+      req.body.id=count;
+      var active=false;
+      var voted=false;
+      let a = {name,email,password} = req.body;// decorative syntax
+      a={id,name,email,password,active,voted};
+      emailTo = req.body.email;
+      // generate token for emaIL
+      var token = jwt.sign({
+          exp: Math.floor(Date.now() / 1000) + parseInt(3600000),   // expire time in milliseconds IN HOUR
+          username: email   // username is now set to the email specified
+      }, app.get('secret'));
+      // generate token for emaIL
+      try{
+         let resp = await registrationSchema.insertOne(a);
+         count++;
+          // mailer
+          var mailOptions = {
+              from: 'prashant.dreamkix@gmail.com',
+              to: emailTo,
+              subject: 'verify your mail for voting app',
+              text: 'http://localhost:8081/api/verify?token='+token
+            };
+            
+            transporter.sendMail(mailOptions, function(error, info){
+              if (error) {
+                console.log(error);
+              } else {
+                console.log('Email sent: ' + info.response);
+              }
+            });
+          //mailer
+          res.redirect('/');
+      }catch(e){
+          console.log(e)
+      }
+
+    }
+
+    else{
+      req.flash('success', ', Email ID already exists');   //   req.flash('success', 'Registration successfully');
+      res.locals.message = req.flash();
+       res.render('registration');
+    }
+  })
+
+
+
+
+
+
+
+
+  router.post('/forgot', urlencodedParser, async function (req, res) {
+    console.log("in forgot");
+    var email =req.body.email;
+    let resp  = await registrationSchema.findOne({email});
+    console.log("in forgot checking resp", resp.email);
+    if(!resp){
+      req.flash('success', ', Email ID not exists reigister first'); 
+      res.locals.message = req.flash();
+      res.render('login');
+    }
+    else{
+      console.log("in else");
+          // generate token for emaIL
+      var token = jwt.sign({
+        exp: Math.floor(Date.now() / 1000) + parseInt(3600000),   // expire time in milliseconds IN HOUR
+        username: email   // username is now set to the email specified
+    }, app.get('secret'));
+
+
+              // mailer
+              var mailOptions = {
+                from: 'prashant.dreamkix@gmail.com',
+                to: email,
+                subject: 'Reset your password for Voting App',
+                text: 'http://localhost:8080/api/resetPassword?token='+token
+              };
+              
+              transporter.sendMail(mailOptions, function(error, info){
+                if (error) {
+                  console.log(error);
+                } else {
+                  console.log('Email sent: ' + info.response);
+                }
+              });
+            //mailer
+    }
+  });
+
+
+router.get('/resetPassword',  function (req,res) {
+
+  console.log("in verify")
+  let token=req.query.token
+  jwt.verify(token, app.get('secret'), async function(err, decoded) {
+          username = decoded.username;
+          res.render('resetPassword.ejs',{username:username});
+    });
+ 
+});
+router.post('/resetPassword', async function (req,res) {
+  if (!req.body) return res.sendStatus(400)
+  var query = {
+    email:req.body.email
+    };
+    let updaetQuery ={$set:{password:req.body.password}};
+  let resp  = await registrationSchema.updateOne(query,updaetQuery);
+  console.log(resp);
+  res.redirect('login');
+});
+
+
+
+
+
+
+
+
+
 // catch 404
 router.use((req, res, next) => { 
   res.status(404).send('<h2 align=center>Page Not Found!</h2>');
 });
+
+
+
   module.exports = router;

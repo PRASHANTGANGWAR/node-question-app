@@ -5,3 +5,8 @@ $(document).ready(function(){
 $(document).ready(function(){
   $("#loginForm").validate();
 });
+
+
+$(document).ready(function(){
+    $("#resetForm").validate();
+  });
