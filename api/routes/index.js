@@ -141,7 +141,7 @@ router.get('/verify', (req,res)=>{
           username = decoded.username;
           var resp= await registrationSchema.updateOne({email:username},{ $set:{ "active": true } })
           console.log("username of verified mail",username);
-          res.send("verifiedff");
+          res.render('verified');
 });
 })
 // verify mail
