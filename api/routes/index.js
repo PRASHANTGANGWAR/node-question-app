@@ -288,7 +288,7 @@ router.post('/registration', urlencodedParser, async function (req, res) {
         username: email   // username is now set to the email specified
     }, app.get('secret'));
 
-
+ 
               // mailer
               var mailOptions = {
                 from: 'prashant.dreamkix@gmail.com',
