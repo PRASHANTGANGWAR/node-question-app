@@ -70,6 +70,11 @@ router.get('/login',function(req,res){
 	res.render('login.ejs');
 });
 
+router.get('/forgot',function(req,res){
+	res.render('forgot.ejs');
+});
+
+
 router.get('/dashboard',async function(req,res,result){
   try{
     var voted = await registrationSchema.findOne({email:sess.email});
@@ -267,8 +272,9 @@ router.post('/registration', urlencodedParser, async function (req, res) {
   router.post('/forgot', urlencodedParser, async function (req, res) {
     console.log("in forgot");
     var email =req.body.email;
+    console.log(email);
     let resp  = await registrationSchema.findOne({email});
-    console.log("in forgot checking resp", resp.email);
+    console.log("in forgot checking resp", resp);
     if(!resp){
       req.flash('success', ', Email ID not exists reigister first'); 
       res.locals.message = req.flash();
@@ -305,7 +311,7 @@ router.post('/registration', urlencodedParser, async function (req, res) {
 
 router.get('/resetPassword',  function (req,res) {
 
-  console.log("in verify")
+  console.log("in resetpasswrd")
   let token=req.query.token
   jwt.verify(token, app.get('secret'), async function(err, decoded) {
           username = decoded.username;

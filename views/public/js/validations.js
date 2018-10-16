@@ -10,3 +10,9 @@ $(document).ready(function(){
 $(document).ready(function(){
     $("#resetForm").validate();
   });
+
+  $(document).ready(function(){
+    $("#forgotForm").validate();
+  });
+
+ 

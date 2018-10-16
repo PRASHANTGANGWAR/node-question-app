@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <link rel="stylesheet" href="/public/css/resetPassword.css">
+  <link rel="stylesheet" href="/public/css/registration.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -14,22 +14,18 @@
 
 </head>
 <body>
-  
-  <div class="absolute">      
-    <p class="sign">Reset password</p>
-    <form autocomplete="off" id="resetForm" action="/api/resetPassword" method="POST">
-        <input type="hidden" value='<%=username %>' name="email" >
-    
+ <% include template/header.ejs%>
+  <div class="absolute">  
+    <p class="sign">Forgot password?</p>
+    <form autocomplete="off" id="forgotForm" action="/api/forgot" method="POST">
      <div class="form-group">
-       <input type="text" id="password" minlength="8" class="form-control input-lg" placeholder="Password" name="password" required>
-     </div>
-     <div class="form-group">
-            <input type="password" id="password" minlength="8" class="form-control input-lg" placeholder="Confirm Password" name="confirmPassword" required>
-          </div>
+            <input type="email" id="email" class="form-control input-lg" placeholder="Email" name="email" required>
+     </div>    
+     <p class="sign">Get Password change link on your registered mail?</p>
      <div  class="input-group-btn">
-       <button class="btn btn-info btn-block" id="btn" type='submit' > Reset Password</button>
+       <button class="btn btn-info btn-block" id="btn" type='submit' >Forgot Password</button>
      </div>       
    </form>   
-   </div>
+</div>
 </body>
 </html>
