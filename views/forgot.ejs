@@ -15,7 +15,13 @@
 </head>
 <body>
  <% include template/header.ejs%>
+
   <div class="absolute">  
+      <% if(locals.message){ %>
+        <div class="alert alert-success" role="alert">
+            <strong>Request unsucessful</strong> <%=message.success%>
+        </div>
+      <% } %>
     <p class="sign">Forgot password?</p>
     <form autocomplete="off" id="forgotForm" action="/api/forgot" method="POST">
      <div class="form-group">

@@ -20,6 +20,8 @@ app.use(cookieParser('secret'))
 app.use(session({secret: 'prashant',saveUninitialized:true , resave:true,cookie: { maxAge: 60000 }}));
 router.use(flash());
 
+
+
 router.get('/flash', function(req, res){
   // Set a flash message by passing the key, followed by the value, to req.flash().
   req.flash('info', 'Flash is back!')
@@ -36,9 +38,7 @@ var id = count;
 var count = 1;
 var msg
 
-router.get('/', function (req, res) {
-    res.send("hello");
-});
+
 
 router.post('/addOptions',async function (req, res) {
    if(sess.voted==false){
@@ -98,6 +98,7 @@ var query = {
 };
   try{
     let resp  = await registrationSchema.findOne(query);
+    console.log(resp);
     if(!resp)
     {
       req.flash('success', ', Enter Valid Exixting Email ID');   //   req.flash('success', 'Registration successfully');
@@ -205,9 +206,6 @@ router.post('/registration', urlencodedParser, async function (req, res) {
     }
   })
 
-
-
-
 router.post('/registration', urlencodedParser, async function (req, res) {
       if (!req.body) return res.sendStatus(400)
       var query = {
@@ -262,13 +260,6 @@ router.post('/registration', urlencodedParser, async function (req, res) {
     }
   })
 
-
-
-
-
-
-
-
   router.post('/forgot', urlencodedParser, async function (req, res) {
     console.log("in forgot");
     var email =req.body.email;
@@ -278,7 +269,7 @@ router.post('/registration', urlencodedParser, async function (req, res) {
     if(!resp){
       req.flash('success', ', Email ID not exists reigister first'); 
       res.locals.message = req.flash();
-      res.render('login');
+      res.render('forgot');
     }
     else{
       console.log("in else");
@@ -294,7 +285,7 @@ router.post('/registration', urlencodedParser, async function (req, res) {
                 from: 'prashant.dreamkix@gmail.com',
                 to: email,
                 subject: 'Reset your password for Voting App',
-                text: 'http://localhost:8080/api/resetPassword?token='+token
+                text: 'http://localhost:8081/api/resetPassword?token='+token
               };
               
               transporter.sendMail(mailOptions, function(error, info){
@@ -305,7 +296,9 @@ router.post('/registration', urlencodedParser, async function (req, res) {
                 }
               });
             //mailer
+           res.render('login');
     }
+    
   });
 
 
@@ -321,13 +314,24 @@ router.get('/resetPassword',  function (req,res) {
 });
 router.post('/resetPassword', async function (req,res) {
   if (!req.body) return res.sendStatus(400)
+  console.log(req.body.confirmPassword , req.body.password);
+
+  if(req.body.password == req.body.confirmPassword)
+  {
   var query = {
     email:req.body.email
     };
     let updaetQuery ={$set:{password:req.body.password}};
   let resp  = await registrationSchema.updateOne(query,updaetQuery);
-  console.log(resp);
+  // req.flash('success', ' reset sucessfull'); 
+  // res.locals.message = req.flash();
   res.redirect('login');
+  }
+  else{
+    req.flash('success', ' Passwod did not match'); 
+    res.locals.message = req.flash();
+    res.render('resetPassword')
+  }
 });
 
 
