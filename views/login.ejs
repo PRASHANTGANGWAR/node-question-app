@@ -17,7 +17,7 @@
    <%- include template/header.ejs%>
 	 <div class="absolute" >    
   <p class="sign">Login to your account</p>
-
+  <!-- <%=JSON.stringify(locals)%> -->
   <% if(locals.message){ %>
     <div class="alert alert-success" role="alert">
         <strong>login unsucessful</strong> <%=message.success%>

@@ -41,7 +41,7 @@ app.get('/registration',function(req,res){
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost:27017/polling-app');*/
 
-app.listen(8081, () => {
-    console.log("listining on port 8081");
+app.listen(8082, () => {
+    console.log("listining on port 8082");
 })
 

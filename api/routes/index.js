@@ -4,7 +4,7 @@ var app = express();
 var mongoose = require('mongoose');
 var url ='mongodb://localhost:27017/polling-app';
 mongoose.connect(url);
-var questions = require("./src/questions.js");
+var questions = require("./src/questions.js").collection;
 var registrationSchema = require('./src/registration').collection;
 //var loginSchema = require('./src/login')
 var bodyParser = require('body-parser');//pull post content from http request
@@ -32,39 +32,67 @@ router.get('/flash', function(req, res){
 var jwt = require('jsonwebtoken');
 app.set('secret', 'prashant');
 //JWT
-
 var sess;
 var id = count;
 var count = 1;
 var msg
-
-
-
+//addoption
 router.post('/addOptions',async function (req, res) {
+  console.log("session mail",sess.email);
    if(sess.voted==false){
    id =id;
    var VoteCount = 1;
-   var option= req.body.textbox;
+   var option= req.body.textbox.trim();
    var optionselected = req.body.optionselected;
-    if(option==''){
-    console.log("in if");
-    var resp =await questions.updateOne({option:optionselected},{$inc:{VoteCount:1}});
-    console.log("mongo",resp)
-  }
-  else{
-    console.log("in else")
+   var sucess= "voted for("+option+")good luck";
+   console.log(option);
+
+   if(!option){ 
+          if(optionselected!='select'){
+        console.log("in if");
+        var resp =await questions.updateOne({option:optionselected},{$inc:{VoteCount:1}});
+        await registrationSchema.updateOne({email:sess.email},{$set:{opted:optionselected}});
+        console.log("mongo",resp);
+        await registrationSchema.updateOne({email:sess.email},{$set:{voted:true}});
+
+        req.flash('success', sucess);   //   req.flash('success', 'Registration successfully');
+        res.locals.message = req.flash();
+       // res.redirect('/api/dashboard');
+       res.render('voted');
+        
+      }else{
+        return res.redirect('back')
+      }
+   }else if(option){
+    console.log("in else if")
     let queryAdd = {id,option,VoteCount};
     var resp =await questions.insertOne(queryAdd);//if option added
+    await registrationSchema.updateOne({email:sess.email},{$set:{opted:option}});
+    await registrationSchema.updateOne({email:sess.email},{$set:{voted:true}});
+
+    res.render('voted');
+
+
     console.log(resp);
     count++;
+  
+   }else{
+     console.log("in space")
+     return res.redirect('back')
+   }
+
+
+   res.redirect('/api/dashboard');
+}
+  else{
+    console.log("hello");
+    req.flash('success', 'already voted');   //   req.flash('success', 'Registration successfully');
+    res.locals.message = req.flash();
+    res.redirect('/api/dashboard?message='+req.flash('success', 'already voted'));
+
   }
-  await registrationSchema.updateOne({email:sess.email},{$set:{voted:true}});
- res.send("voted");
-}
-else{
-  res.send("why you want to vote again ??? hmmmm ????");
-}
-});
+  })
+
 
 router.get('/login',function(req,res){
 	res.render('login.ejs');
@@ -77,11 +105,29 @@ router.get('/forgot',function(req,res){
 
 router.get('/dashboard',async function(req,res,result){
   try{
-    var voted = await registrationSchema.findOne({email:sess.email});
-    sess.voted =voted.voted; 
-    sess.name = voted.name;
-    let resp = await questions.find({});
-    res.render('dashboard.ejs',{data:resp,voted:voted.voted,name:voted.name});
+    console.log("1");
+    if(req.query.message)
+    {
+      res.locals.message=req.query.message;
+    }
+
+    var allUser = await registrationSchema.find({}).toArray();
+
+
+    console.log( req.flash);
+    // console.log(message.success);
+    // console.log(locals.message);
+
+    var respDash = await registrationSchema.findOne({email:sess.email});
+    sess.voted =respDash.voted; 
+    sess.name = respDash.name;
+
+    console.log(sess.voted , sess.name);
+    console.log("session mail",sess.email);
+
+    let resp = await questions.find({}).toArray();
+    console.log("all question",resp)
+    res.render('dashboard.ejs',{data:resp,voted:sess.voted,name:sess.name,allUser:allUser ,opted:respDash.opted});
   }
   catch(e){
       console.log(e)
@@ -98,18 +144,21 @@ var query = {
 };
   try{
     let resp  = await registrationSchema.findOne(query);
-    console.log(resp);
+    console.log("resp",resp);
     if(!resp)
     {
       req.flash('success', ', Enter Valid Exixting Email ID');   //   req.flash('success', 'Registration successfully');
       res.locals.message = req.flash();
        res.render('login');
+       console.log( res.locals.message);
+      //  console.log(message.success);
+      //  console.log(locals.message);
       //res.send("not foud");
     }
     else{
       console.log("login",resp);
       if (resp.length == 0  ) {
-        req.flash('success', ', Enter Valid Exixting Email ID');   //   req.flash('success', 'Registration successfully');
+        req.flash('success', ', Enter Valid Exixting Email Id');   //   req.flash('success', 'Registration successfully');
       res.locals.message = req.flash();
        res.render('login');
       }
@@ -164,14 +213,16 @@ router.post('/registration', urlencodedParser, async function (req, res) {
       req.body.id=count;
       var active=false;
       var voted=false;
+      var opted='';
       let a = {name,email,password} = req.body;// decorative syntax
-      a={id,name,email,password,active,voted};
+      a={id,name,email,password,active,voted,opted};
       emailTo = req.body.email;
       // generate token for emaIL
       var token = jwt.sign({
           exp: Math.floor(Date.now() / 1000) + parseInt(3600000),   // expire time in milliseconds IN HOUR
           username: email   // username is now set to the email specified
       }, app.get('secret'));
+      console.log(token);
       // generate token for emaIL
       try{
          let resp = await registrationSchema.insertOne(a);
@@ -339,7 +390,12 @@ router.post('/resetPassword', async function (req,res) {
 
 
 
-
+router.post('/logout' , urlencodedParser ,  function(req,res)
+  {
+    req.session.destroy();
+    sess ={};  
+    res.redirect('login');  
+  });
 
 
 // catch 404

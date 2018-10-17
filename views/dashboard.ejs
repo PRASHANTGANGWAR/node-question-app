@@ -4,36 +4,118 @@
 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <link rel="stylesheet" href="/public/css/registration.css">
+  <link rel="stylesheet" href="/public/css/dashboard.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  <script  src="/js/validations.js"> </script>
+   <script type="application/json" src="/js/validations.js"> </script> 
     </head>
     <body>
             <% include template/header.ejs%>
             <h2 style="text-align:center"><%= name %></h2>
             <div class="absolute">   
-        <h5 class="h3">Please choose one option or enter new option </h5>
+                    <% if(locals.message){ %>
+                        <div class="alert alert-success" role="alert">
+                            <strong>Alert , </strong> <%=messages.success%>
+                        </div>
+                    <% } %> 
+
+                    
+        <h4 class="h6">Please choose one option or enter new option </h4>
 
         <div>
             <h3 >Question :vote by selecting option <h3>
         </div>
          <div class="options">
-                <!-- <h1>voted or not : <%= voted %></h1> -->
-                <form id="addOption" action="/api/addOptions" method="POST">
+                <% if(voted){ %>
+                <h3>You have already Voted <%= opted%></h3>
+                <% } %> 
+
+
+                <% if(!voted){ %>
+                <form id="" action="/api/addOptions" method="POST">
                     <select class="form-control" id="opt" name="optionselected">
+                        <option selected>select</option>
                             <% for(var i=0; i < data.length; i++) { %>
                                <option><%= data[i].option %></option>
                             <% } %>
-                            </select>
-                            
+                            </select>  
                 <hr>
+                
                 <p>Add An Option </p>
-                <input type="text" class="textbox" name = "textbox"><br><br>
+
+                <div class="form-group">
+                        <input type="text" id="textbox" minlength="8" class="form-control input-lg" placeholder="enter your option" name="textbox" >
+                      </div>
+
+                <!-- <input type="text" class="textbox" name = "textbox"><br><br> -->
+               
                 <button class="btn btn-info btn-block" id="btn" type='submit' >submit</button>
+               
             </form>
+            <% } %> 
+            
+
+            <div>
+                    <table>
+                            <tr>
+                              <th>name</th>
+                              <th>vote opted</th>
+                            </tr>
+                            <% for(i in allUser){  %>
+                            <tr>
+                                    <th> <%=allUser[i].name %>  </th>
+                                    <% if(! allUser[i].opted){ %>
+                                    <th> Not Voted!!  </th>
+                                    <%}else{%>
+                                       <th>  <%= allUser[i].opted %> </th>
+                                        <%}%>
+                                  </tr>
+                                  <%}%>
+                          </table>
+            </div>
          </div>
          <div>
+    <!-- <script>
+        function ajaxtry() {
+            var oReq = new XMLHttpRequest();
+    // Creating event
+    oReq.onreadystatechange = function () {
+        // Checking the ready state and response
+        if (this.readyState == 4 && this.status == 200) {
+            let response = JSON.parse(this.response);
+            // Checking the resposne (Example)
+            if (response["status"] == "success") {
+                location.reload();
+            } else {
+                console.log(response, " ", response.status)
+            }
+
+        }
+    };
+    // Creating the POST request and with async
+    oReq.open("POST", "/api/dashboard", true);
+    // Sending the request
+    oReq.send(formData);
+        }
+        </script> -->
     </body>
 </html>
+
+<style>
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+        
+        td, th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #dddddd;
+        }
+        </style>

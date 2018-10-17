@@ -18,7 +18,8 @@ var registrationSchema = new Schema({
     email: String,
     password : String,
     active : Boolean,
-    voted :Boolean
+    voted :Boolean,
+    opted :String
     //  isVerified: { type: Boolean, default: false },
 })
 module.exports = mongoose.model('registrations', registrationSchema)

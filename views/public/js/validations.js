@@ -14,5 +14,7 @@ $(document).ready(function(){
   $(document).ready(function(){
     $("#forgotForm").validate();
   });
+  $(document).ready(function(){
+    $("#dashboardForm").validate();
+  });
 
- 
